@@ -90,3 +90,24 @@ UIScrollView 的外设类库，用于扩展 ScrollView 子类，主要以 TableV
     * time_text: 用于显示刷新时间
     * hint_image: 用于显示提示图标
     * hint_activity: 用于显示等待状态
+
+> --- 使用示例 ---
+> 1. 在 Storyboard 中拖入一个空白 View。
+> 2. 设置 View 的 Custom Class -> Class 为 RefreshView_Header_Simple
+> 3. 右键该 View，
+> 3.1 拖动 scroll_view 到 TableView 或 CollectionView 上。
+> 3.2 拖动 delegate_link 到 ViewController 上
+> ![Refresh_image/RefreshView_Header_Simple_0.png]()
+> 4. 在 ViewController 类中添加代码，实现 RefreshView_Delegate，即可。
+```
+extension ViewController: RefreshView_Delegate {
+    func refreshView(view: RefreshView, identifier: String) {
+        DispatchQueue.global().async {
+            Thread.sleep(forTimeInterval: 3)
+            DispatchQueue.main.async {
+                self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
+            }
+        }
+    }
+}
+```
