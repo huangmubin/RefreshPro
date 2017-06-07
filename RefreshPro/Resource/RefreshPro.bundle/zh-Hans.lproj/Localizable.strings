@@ -1,0 +1,25 @@
+"RefreshView_Header_Refreshing_Text" = "正在刷新数据中...";
+"RefreshView_Header_Refresh_Success" = "数据刷新成功";
+"RefreshView_Header_Refresh_Error" = "数据刷新失败";
+
+"RefreshView_Header_None_Time_Prefix_Text" = "最后更新：";
+"RefreshView_Header_Normal_Text" = "下拉可以刷新";
+"RefreshView_Header_Draging_Text" = "松开立即刷新";
+
+
+
+
+
+
+
+"RefreshView_Header_TodayText" = "今天";
+"RefreshView_Header_None_LastTime_Text" = "无记录";
+
+"MJRefreshAutoFooterIdleText" = "点击或上拉加载更多";
+"MJRefreshAutoFooterRefreshingText" = "正在加载更多的数据...";
+"MJRefreshAutoFooterNoMoreDataText" = "已经全部加载完毕";
+
+"MJRefreshBackFooterIdleText" = "上拉可以加载更多";
+"MJRefreshBackFooterPullingText" = "松开立即加载更多";
+"MJRefreshBackFooterRefreshingText" = "正在加载更多的数据...";
+"MJRefreshBackFooterNoMoreDataText" = "已经全部加载完毕";

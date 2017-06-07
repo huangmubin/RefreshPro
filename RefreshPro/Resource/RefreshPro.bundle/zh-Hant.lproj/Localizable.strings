@@ -1,0 +1,25 @@
+"RefreshView_Header_Refreshing_Text" = "正在刷新數據中...";
+"RefreshView_Header_Refresh_Success" = "數據刷新成功";
+"RefreshView_Header_Refresh_Error" = "數據刷新失败";
+
+"RefreshView_Header_None_Time_Prefix_Text" = "最後更新：";
+"RefreshView_Header_Normal_Text" = "下拉可以刷新";
+"RefreshView_Header_Draging_Text" = "鬆開立即刷新";
+
+
+
+
+
+
+
+"RefreshView_Header_TodayText" = "今天";
+"RefreshView_Header_None_LastTime_Text" = "無記錄";
+
+"MJRefreshAutoFooterIdleText" = "點擊或上拉加載更多";
+"MJRefreshAutoFooterRefreshingText" = "正在加載更多的數據...";
+"MJRefreshAutoFooterNoMoreDataText" = "已經全部加載完畢";
+
+"MJRefreshBackFooterIdleText" = "上拉可以加載更多";
+"MJRefreshBackFooterPullingText" = "鬆開立即加載更多";
+"MJRefreshBackFooterRefreshingText" = "正在加載更多的數據...";
+"MJRefreshBackFooterNoMoreDataText" = "已經全部加載完畢";

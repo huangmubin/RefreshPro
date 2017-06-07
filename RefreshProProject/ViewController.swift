@@ -32,6 +32,21 @@ class ViewController: UIViewController {
     
 }
 
+// MARK: - RefreshView_Delegate
+
+extension ViewController: RefreshView_Delegate {
+    
+    func refreshView(view: RefreshView, identifier: String) {
+        DispatchQueue.global().async {
+            Thread.sleep(forTimeInterval: 3)
+            DispatchQueue.main.async {
+                self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
+            }
+        }
+    }
+    
+}
+
 // MAKR: - UITableViewDataSource
 
 extension ViewController: UITableViewDataSource {
