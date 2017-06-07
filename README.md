@@ -99,15 +99,15 @@ UIScrollView 的外设类库，用于扩展 ScrollView 子类，主要以 TableV
 > 3.2 拖动 delegate_link 到 ViewController 上
 > ![](Readme_image/refresh_header_simple_0.png)
 > 4. 在 ViewController 类中添加代码，实现 RefreshView_Delegate，即可。
-```
-extension ViewController: RefreshView_Delegate {
-    func refreshView(view: RefreshView, identifier: String) {
-        DispatchQueue.global().async {
-            Thread.sleep(forTimeInterval: 3)
-            DispatchQueue.main.async {
-                self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
-            }
-        }
-    }
-}
-```
+> ```
+> extension ViewController: RefreshView_Delegate {
+>     func refreshView(view: RefreshView, identifier: String) {
+>         DispatchQueue.global().async {
+>             Thread.sleep(forTimeInterval: 3)
+>             DispatchQueue.main.async {
+>                 self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
+>             }
+>         }
+>     }
+> }
+> ```
