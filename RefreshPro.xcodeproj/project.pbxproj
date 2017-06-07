@@ -22,6 +22,7 @@
 		9CD1C5F11EE7E28700DA88DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9CD1C5F41EE7E28700DA88DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9CD1C5F61EE7E28700DA88DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9CD1C5FE1EE7E5D000DA88DE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +39,7 @@
 		9CD1C5DE1EE7E28700DA88DE = {
 			isa = PBXGroup;
 			children = (
-				9CD1C5E91EE7E28700DA88DE /* RefreshPro */,
+				9CD1C5E91EE7E28700DA88DE /* RefreshProProject */,
 				9CD1C5E81EE7E28700DA88DE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -51,18 +52,35 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9CD1C5E91EE7E28700DA88DE /* RefreshPro */ = {
+		9CD1C5E91EE7E28700DA88DE /* RefreshProProject */ = {
 			isa = PBXGroup;
 			children = (
-				9CD1C5EA1EE7E28700DA88DE /* AppDelegate.swift */,
-				9CD1C5EC1EE7E28700DA88DE /* ViewController.swift */,
+				9CD1C5FC1EE7E37200DA88DE /* Project Resources */,
 				9CD1C5EE1EE7E28700DA88DE /* Main.storyboard */,
-				9CD1C5F11EE7E28700DA88DE /* Assets.xcassets */,
-				9CD1C5F31EE7E28700DA88DE /* LaunchScreen.storyboard */,
+				9CD1C5EC1EE7E28700DA88DE /* ViewController.swift */,
+				9CD1C5FE1EE7E5D000DA88DE /* README.md */,
+				9CD1C5FD1EE7E5C200DA88DE /* RefreshPro */,
+			);
+			path = RefreshProProject;
+			sourceTree = "<group>";
+		};
+		9CD1C5FC1EE7E37200DA88DE /* Project Resources */ = {
+			isa = PBXGroup;
+			children = (
 				9CD1C5F61EE7E28700DA88DE /* Info.plist */,
+				9CD1C5F31EE7E28700DA88DE /* LaunchScreen.storyboard */,
+				9CD1C5F11EE7E28700DA88DE /* Assets.xcassets */,
+				9CD1C5EA1EE7E28700DA88DE /* AppDelegate.swift */,
+			);
+			name = "Project Resources";
+			sourceTree = "<group>";
+		};
+		9CD1C5FD1EE7E5C200DA88DE /* RefreshPro */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = RefreshPro;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -264,7 +282,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 9X2EVZ736U;
-				INFOPLIST_FILE = RefreshPro/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/RefreshProProject/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = myron.RefreshPro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -277,7 +296,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 9X2EVZ736U;
-				INFOPLIST_FILE = RefreshPro/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/RefreshProProject/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = myron.RefreshPro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -304,6 +324,7 @@
 				9CD1C5FB1EE7E28700DA88DE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
