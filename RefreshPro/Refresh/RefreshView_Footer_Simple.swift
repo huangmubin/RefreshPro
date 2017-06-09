@@ -1,8 +1,8 @@
 //
-//  RefreshView_Header_Simple.swift
+//  RefreshView_Footer_Simple.swift
 //  RefreshPro
 //
-//  Created by Myron on 2017/6/7.
+//  Created by Myron on 2017/6/8.
 //  Copyright © 2017年 Myron. All rights reserved.
 //
 
@@ -12,15 +12,15 @@ import UIKit
 
 extension UIScrollView {
     
-    func header_simple(tag: Int = 501) -> RefreshView_Header_Simple? {
-        return viewWithTag(tag) as? RefreshView_Header_Simple
+    func footer_simple(tag: Int = 502) -> RefreshView_Footer_Simple? {
+        return viewWithTag(tag) as? RefreshView_Footer_Simple
     }
     
 }
 
-// MARK: - RefreshView_Header_Simple
+// MARK: - RefreshView_Footer_Simple
 
-class RefreshView_Header_Simple: RefreshView_Header {
+class RefreshView_Footer_Simple: RefreshView_Footer {
     
     // MARK: - Sub Views
     
@@ -28,6 +28,11 @@ class RefreshView_Header_Simple: RefreshView_Header {
     var time_text = UILabel()
     var hint_image = UIImageView()
     var hint_activity = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
+    var action_button = UIButton()
+    
+    func refresh_action(_ sender: UIButton) {
+        status_set(refesh_to_refeshing: nil)
+    }
     
     // MARK: - View Datas
     
@@ -42,7 +47,7 @@ class RefreshView_Header_Simple: RefreshView_Header {
         format.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return format
     }()
-
+    
     // MARK: - Init Deploy
     
     /** 初始化完毕时调用，用于配置视图属性 */
@@ -55,6 +60,7 @@ class RefreshView_Header_Simple: RefreshView_Header {
         addSubview(time_text)
         addSubview(hint_image)
         addSubview(hint_activity)
+        addSubview(action_button)
         
         info_text.text = text_normal
         
@@ -66,6 +72,14 @@ class RefreshView_Header_Simple: RefreshView_Header {
         hint_image.contentMode = .scaleAspectFit
         hint_image.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
         hint_activity.color = UIColor.black
+        
+        hint_image.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+        
+        action_button.addTarget(
+            self, 
+            action: #selector(refresh_action(_:)),
+            for: .touchUpInside
+        )
     }
     
     // MARK: - Status Actions
@@ -79,7 +93,7 @@ class RefreshView_Header_Simple: RefreshView_Header {
                 self.info_text.text = text
                 self.frame_subviews_update(size: self.frame)
                 UIView.animate(withDuration: 0.25, animations: {
-                    self.hint_image.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                    self.hint_image.transform = CGAffineTransform(rotationAngle: 0)
                 })
             }
         }
@@ -89,7 +103,7 @@ class RefreshView_Header_Simple: RefreshView_Header {
                 self.info_text.text = text
                 self.frame_subviews_update(size: self.frame)
                 UIView.animate(withDuration: 0.25, animations: {
-                    self.hint_image.transform = CGAffineTransform(rotationAngle: 0)
+                    self.hint_image.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
                 })
             }
         }
@@ -129,7 +143,12 @@ class RefreshView_Header_Simple: RefreshView_Header {
         
         delay(time: refreshed_animation_time, block: {
             self.status_set(normal: {
-                self.hint_image.image = self.image_draging
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.hint_image.image = self.image_draging
+                    self.hint_image.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                    self.info_text.text = self.text_normal
+                    self.frame_subviews_update(size: self.frame)
+                })
             })
         })
     }
@@ -162,6 +181,9 @@ class RefreshView_Header_Simple: RefreshView_Header {
             y: center.y
         )
         hint_activity.center = hint_image.center
+        
+        action_button.frame = bounds
     }
-    
+
+
 }

@@ -1,12 +1,13 @@
-"RefreshView_Header_Refreshing_Text" = "正在刷新數據中...";
-"RefreshView_Header_Refresh_Success" = "數據刷新成功";
-"RefreshView_Header_Refresh_Error" = "數據刷新失败";
+"RefreshView_Refreshing_Text" = "正在刷新數據中...";
+"RefreshView_Refresh_Success" = "數據刷新成功";
+"RefreshView_Refresh_Error" = "數據刷新失败";
 
-"RefreshView_Header_None_Time_Prefix_Text" = "最後更新：";
+"RefreshView_Draging_Text" = "鬆開立即刷新";
+"RefreshView_Time_Prefix_Text" = "最後更新：";
+
 "RefreshView_Header_Normal_Text" = "下拉可以刷新";
-"RefreshView_Header_Draging_Text" = "鬆開立即刷新";
 
-
+"RefreshView_Footer_Normal_Text" = "點擊或上拉可以刷新";
 
 
 
