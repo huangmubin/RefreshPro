@@ -33,48 +33,63 @@ class RefreshView_Header: RefreshView {
 
     // MARK: - Status Actions
     
-    /** 设置状态成为 normal */
-    override func status_set(normal complete: (() -> Void)?) {
-        if var inset = self.scroll_view?.contentInset {
-            if self.refresh_direction_is_vertical {
-                inset.top -= self.refresh_space
-            }
-            else {
-                inset.left -= self.refresh_space
-            }
-            UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
-                self.scroll_view?.contentInset = inset
-            }, completion: { _ in
-                super.status_set(normal: complete)
-            })
-        }
-    }
-    
-    /** 设置状态成为 refresh，并且进入刷新状态，留给 Footer, Header 视图自己实现 */
-    override func status_set(refesh_to_refeshing complete: (() -> Void)?) {
-        status = .refresh
-        if refresh_direction_is_vertical {
-            UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
-                if var inset = self.scroll_view?.contentInset {
-                    inset.top = inset.top + self.refresh_space
-                    self.scroll_view?.contentInset = inset
+    override func status_normal(complete: (() -> Void)? = nil) {
+        if refresh_inset_is_offseted {
+            if var inset = self.scroll_view?.contentInset {
+                if self.refresh_direction_is_vertical {
+                    inset.top -= self.refresh_space
                 }
-            }, completion: { _ in
-                self.status = .refreshing
-            })
+                else {
+                    inset.left -= self.refresh_space
+                }
+                UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
+                    self.scroll_view?.contentInset = inset
+                }, completion: { _ in
+                    self.refresh_inset_is_offseted = false
+                    complete?()
+                })
+            }
         }
         else {
-            UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
-                if var inset = self.scroll_view?.contentInset {
-                    inset.left = inset.left + self.refresh_space
-                    self.scroll_view?.contentInset = inset
-                }
-            }, completion: { _ in
-                self.status = .refreshing
-            })
+            complete?()
         }
     }
     
+    override func status_refresh() {
+        if refresh_inset_is_offseted {
+            self.status_change(to: .refreshing)
+        }
+        else {
+            if refresh_direction_is_vertical {
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
+                    if var inset = self.scroll_view?.contentInset {
+                        inset.top = inset.top + self.refresh_space
+                        self.scroll_view?.contentInset = inset
+                    }
+                }, completion: { _ in
+                    self.refresh_inset_is_offseted = true
+                    self.status_change(to: .refreshing)
+                })
+            }
+            else {
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
+                    if var inset = self.scroll_view?.contentInset {
+                        inset.left = inset.left + self.refresh_space
+                        self.scroll_view?.contentInset = inset
+                    }
+                }, completion: { _ in
+                    self.refresh_inset_is_offseted = true
+                    self.status_change(to: .refreshing)
+                })
+            }
+        }
+    }
+    
+    override func status_refreshed(result: Bool, data: Any?) {
+        delay(time: refreshed_animation_time, block: {
+            self.status_change(to: .normal)
+        })
+    }
     
     // MARK: - Self and Sub Size Update
     
@@ -141,16 +156,16 @@ class RefreshView_Header: RefreshView {
             switch status {
             case .normal:
                 if offset.y < 0 || offset.x < 0 {
-                    status = .draging(-offset.y / refresh_space)
+                    status_change(to: .draging(-offset.y / refresh_space))
                 }
             case .draging(_):
                 if (refresh_direction_is_vertical && offset.y >= 0)
                 || (!refresh_direction_is_vertical && offset.x >= 0) {
-                    status = .draging(0)
-                    status = .normal
+                    status_change(to: .draging(0))
+                    status_change(to: .normal)
                 }
                 else {
-                    status = .draging(-offset.y / refresh_space)
+                    status_change(to: .draging(-offset.y / refresh_space))
                 }
             default:
                 break
@@ -161,10 +176,10 @@ class RefreshView_Header: RefreshView {
             switch status {
             case .draging(let value):
                 if value <= 1 {
-                    status = .normal
+                    status_change(to: .normal)
                 }
                 else {
-                    status_set(refesh_to_refeshing: nil)
+                    status_change(to: .refresh)
                 }
             default:
                 break

@@ -31,7 +31,7 @@ class RefreshView_Footer_Simple: RefreshView_Footer {
     var action_button = UIButton()
     
     func refresh_action(_ sender: UIButton) {
-        status_set(refesh_to_refeshing: nil)
+        status_change(to: .refresh)
     }
     
     // MARK: - View Datas
@@ -84,7 +84,26 @@ class RefreshView_Footer_Simple: RefreshView_Footer {
     
     // MARK: - Status Actions
     
-    /** 设置刷新状态为 draging 时调用 */
+    override func status_fully() {
+        self.hint_image.isHidden = true
+        self.info_text.text = self.text_fully
+        self.frame_subviews_update(size: self.frame)
+    }
+    
+    override func status_normal(complete: (() -> Void)?) {
+        super.status_normal(complete: {
+            UIView.animate(withDuration: 0.25, animations: {
+                self.hint_image.isHidden = false
+                self.hint_image.image = self.image_draging
+                self.hint_image.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
+                self.info_text.text = self.text_normal
+                self.frame_subviews_update(size: self.frame)
+            }, completion: { _ in
+                complete?()
+            })
+        })
+    }
+    
     override func status_draging(value: CGFloat) {
         super.status_draging(value: value)
         if value >= 1 {
@@ -109,11 +128,6 @@ class RefreshView_Footer_Simple: RefreshView_Footer {
         }
     }
     
-    /** 设置刷新状态为 refreshing 时调用
-     刷新动画写在这个位置。
-     默认会调用 delegate.refreshView(view: RefreshView, identifier: String);
-     假如 delegate 为空，则直接调用 status_set(refreshed: false, data: nil)
-     */
     override func status_refreshing() {
         hint_image.isHidden = true
         hint_activity.isHidden = false
@@ -123,10 +137,6 @@ class RefreshView_Footer_Simple: RefreshView_Footer {
         super.status_refreshing()
     }
     
-    /** 设置刷新状态为 refreshed 时调用。
-     结束时动画写在这个位置。
-     默认调用 status_set(normal: nil)
-     */
     override func status_refreshed(result: Bool, data: Any?) {
         hint_activity.isHidden = true
         hint_activity.stopAnimating()
@@ -141,16 +151,7 @@ class RefreshView_Footer_Simple: RefreshView_Footer {
         
         frame_subviews_update(size: bounds)
         
-        delay(time: refreshed_animation_time, block: {
-            self.status_set(normal: {
-                UIView.animate(withDuration: 0.25, animations: {
-                    self.hint_image.image = self.image_draging
-                    self.hint_image.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-                    self.info_text.text = self.text_normal
-                    self.frame_subviews_update(size: self.frame)
-                })
-            })
-        })
+        super.status_refreshed(result: result, data: data)
     }
     
     // MARK: - Self and Sub Size Update

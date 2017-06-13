@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Delegate link-->
+        <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="RefreshPro" customModuleProvider="target" sceneMemberID="viewController">
@@ -50,21 +50,39 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xh4-SF-CpX">
-                                <rect key="frame" x="164" y="617" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
+                                <rect key="frame" x="161" y="617" width="53" height="30"/>
+                                <state key="normal" title="Refresh"/>
                                 <connections>
                                     <action selector="action:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xZC-wW-CUe"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HQB-Lr-DPN">
+                                <rect key="frame" x="16" y="617" width="32" height="30"/>
+                                <state key="normal" title="Fully"/>
+                                <connections>
+                                    <action selector="fully:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2EA-4y-kq2"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p9y-T8-ljW">
+                                <rect key="frame" x="309" y="617" width="50" height="30"/>
+                                <state key="normal" title="Normal"/>
+                                <connections>
+                                    <action selector="normal:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ALr-Zs-NXB"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Xh4-SF-CpX" secondAttribute="bottom" constant="20" id="1aA-hn-hRi"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HQB-Lr-DPN" secondAttribute="bottom" constant="20" id="D47-Kr-KOo"/>
                             <constraint firstItem="dCQ-bv-Euh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="Gpg-I0-vGc"/>
+                            <constraint firstItem="HQB-Lr-DPN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="QAU-mO-q7r"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="dCQ-bv-Euh" secondAttribute="bottom" constant="80" id="Qdu-Mn-YBZ"/>
                             <constraint firstItem="dCQ-bv-Euh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Qws-bl-Xpm"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="p9y-T8-ljW" secondAttribute="bottom" constant="20" id="WI5-Od-GYr"/>
                             <constraint firstItem="Xh4-SF-CpX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bNd-Qi-rpk"/>
                             <constraint firstItem="dCQ-bv-Euh" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="bSb-HZ-P0a"/>
+                            <constraint firstItem="p9y-T8-ljW" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="saX-hs-s7D"/>
                         </constraints>
                     </view>
                     <connections>
@@ -72,13 +90,12 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <view contentMode="scaleToFill" id="COm-UL-Cox" customClass="RefreshView_Header_Simple" customModule="RefreshPro" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="302" height="85"/>
+                <view contentMode="scaleToFill" id="bke-Y1-Kb7" customClass="RefreshView_Empty" customModule="RefreshPro" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
-                        <outlet property="delegate_link" destination="BYZ-38-t0r" id="Q95-1O-enq"/>
-                        <outlet property="scroll_view" destination="dCQ-bv-Euh" id="PnW-fl-sjA"/>
+                        <outlet property="scroll_view" destination="dCQ-bv-Euh" id="qiW-IP-PsP"/>
                     </connections>
                 </view>
             </objects>
