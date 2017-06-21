@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let footer = RefreshView_Footer_Simple()
+//        footer.no_more_data = true
         footer.delegate = self
         tableview.addSubview(footer)
     }
@@ -34,10 +35,11 @@ class ViewController: UIViewController {
             switch status {
             case .refreshing:
                 UIView.animate(withDuration: 0.25, delay: 0, options: UIViewAnimationOptions.transitionCrossDissolve, animations: {
-                    self.linses = 5
+                    self.linses = 3
                     self.tableview.reloadData()
                 }, completion: { _ in
                     self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
+                    self.tableview.refresh_footer()?.no_more_data = false
                 })
             default:
                 break
@@ -47,10 +49,11 @@ class ViewController: UIViewController {
             switch status {
             case .refreshing:
                 UIView.animate(withDuration: 0.25, delay: 0, options: UIViewAnimationOptions.transitionCrossDissolve, animations: {
-                    self.linses += 5
+                    self.linses += 3
                     self.tableview.reloadData()
                 }, completion: { _ in
                     self.tableview.refresh_footer()?.status_set(refreshed: true, data: nil)
+                    self.tableview.refresh_footer()?.no_more_data = true
                 })
             default:
                 break

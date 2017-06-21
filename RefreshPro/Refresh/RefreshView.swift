@@ -61,10 +61,27 @@ class RefreshView: UIView {
     /** 是否已经无法继续更新数据了 */
     @IBInspectable var no_more_data: Bool = false {
         willSet {
-            
+            if newValue {
+                switch status {
+                case .refreshing:
+                    status_set(refreshed: false, data: nil)
+                default:
+                    status_set(normal: nil)
+                }
+            }
         }
         didSet {
-            
+            if no_more_data && !oldValue {
+                DispatchQueue.global().async {
+                    Thread.sleep(forTimeInterval: 3)
+                    DispatchQueue.main.async {
+                        self.status_no_more_data()
+                    }
+                }
+            }
+            else {
+                status_set(normal: nil)
+            }
         }
     }
     
@@ -287,6 +304,9 @@ class RefreshView: UIView {
     func status_refreshed(result: Bool, data: Any?) {
         status_set(normal: nil)
     }
+    
+    /** 设置数据已经无法进行刷新了 的状态。 */
+    func status_no_more_data() { }
     
     // MARK: Set
     

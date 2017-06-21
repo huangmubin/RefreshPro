@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9C5C26521EE8DDB600D51020 /* RefreshView_Footer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5C26511EE8DDB600D51020 /* RefreshView_Footer.swift */; };
 		9C5C26541EE8F51500D51020 /* RefreshView_Footer_Simple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5C26531EE8F51500D51020 /* RefreshView_Footer_Simple.swift */; };
+		9CBFFB841EEBD32200E29EF6 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBFFB831EEBD32200E29EF6 /* EmptyView.swift */; };
 		9CD1C5EB1EE7E28700DA88DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD1C5EA1EE7E28700DA88DE /* AppDelegate.swift */; };
 		9CD1C5ED1EE7E28700DA88DE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD1C5EC1EE7E28700DA88DE /* ViewController.swift */; };
 		9CD1C5F01EE7E28700DA88DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9CD1C5EE1EE7E28700DA88DE /* Main.storyboard */; };
@@ -23,7 +24,8 @@
 /* Begin PBXFileReference section */
 		9C5C26511EE8DDB600D51020 /* RefreshView_Footer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshView_Footer.swift; sourceTree = "<group>"; };
 		9C5C26531EE8F51500D51020 /* RefreshView_Footer_Simple.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshView_Footer_Simple.swift; sourceTree = "<group>"; };
-		9CD1C5E71EE7E28700DA88DE /* RefreshPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RefreshPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CBFFB831EEBD32200E29EF6 /* EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
+		9CD1C5E71EE7E28700DA88DE /* RefreshPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = RefreshPro.app; path = "/Users/myron/Developer/GitHub/RefreshPro/build/Debug-iphoneos/RefreshPro.app"; sourceTree = "<absolute>"; };
 		9CD1C5EA1EE7E28700DA88DE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9CD1C5EC1EE7E28700DA88DE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9CD1C5EF1EE7E28700DA88DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -52,16 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				9CD1C5E91EE7E28700DA88DE /* RefreshProProject */,
-				9CD1C5E81EE7E28700DA88DE /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		9CD1C5E81EE7E28700DA88DE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				9CD1C5E71EE7E28700DA88DE /* RefreshPro.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		9CD1C5E91EE7E28700DA88DE /* RefreshProProject */ = {
@@ -100,6 +93,7 @@
 		9CD1C5FF1EE7E6DD00DA88DE /* Empty */ = {
 			isa = PBXGroup;
 			children = (
+				9CBFFB831EEBD32200E29EF6 /* EmptyView.swift */,
 			);
 			path = Empty;
 			sourceTree = "<group>";
@@ -109,8 +103,8 @@
 			children = (
 				9CD1C6021EE7E6EE00DA88DE /* RefreshView.swift */,
 				9CD1C6041EE7F72C00DA88DE /* RefreshView_Header.swift */,
-				9CD1C6061EE7FC2E00DA88DE /* RefreshView_Header_Simple.swift */,
 				9C5C26511EE8DDB600D51020 /* RefreshView_Footer.swift */,
+				9CD1C6061EE7FC2E00DA88DE /* RefreshView_Header_Simple.swift */,
 				9C5C26531EE8F51500D51020 /* RefreshView_Footer_Simple.swift */,
 			);
 			path = Refresh;
@@ -170,7 +164,7 @@
 				Base,
 			);
 			mainGroup = 9CD1C5DE1EE7E28700DA88DE;
-			productRefGroup = 9CD1C5E81EE7E28700DA88DE /* Products */;
+			productRefGroup = 9CD1C5DE1EE7E28700DA88DE;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -202,6 +196,7 @@
 				9C5C26521EE8DDB600D51020 /* RefreshView_Footer.swift in Sources */,
 				9CD1C6031EE7E6EE00DA88DE /* RefreshView.swift in Sources */,
 				9CD1C6051EE7F72C00DA88DE /* RefreshView_Header.swift in Sources */,
+				9CBFFB841EEBD32200E29EF6 /* EmptyView.swift in Sources */,
 				9CD1C5ED1EE7E28700DA88DE /* ViewController.swift in Sources */,
 				9C5C26541EE8F51500D51020 /* RefreshView_Footer_Simple.swift in Sources */,
 				9CD1C5EB1EE7E28700DA88DE /* AppDelegate.swift in Sources */,

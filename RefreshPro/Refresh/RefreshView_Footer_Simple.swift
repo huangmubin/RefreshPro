@@ -153,6 +153,14 @@ class RefreshView_Footer_Simple: RefreshView_Footer {
         })
     }
     
+    /** 设置数据已经无法进行刷新了 的状态。 */
+    override func status_no_more_data() {
+        hint_image.isHidden = true
+        hint_activity.isHidden = true
+        info_text.text = "Can't!!!!"
+        frame_subviews_update(size: frame)
+    }
+    
     // MARK: - Self and Sub Size Update
     
     /** 更新子视图的尺寸 */
