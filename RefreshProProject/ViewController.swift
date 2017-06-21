@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var tableview: UITableView!
-    var linses = 5
+    var linses = 0
     
     // MARK: - Life Cycle
     
@@ -21,6 +21,10 @@ class ViewController: UIViewController {
 //        footer.no_more_data = true
         footer.delegate = self
         tableview.addSubview(footer)
+        
+        let header = RefreshView_Header_Simple()
+        header.delegate = self
+        tableview.addSubview(header)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -35,11 +39,18 @@ class ViewController: UIViewController {
             switch status {
             case .refreshing:
                 UIView.animate(withDuration: 0.25, delay: 0, options: UIViewAnimationOptions.transitionCrossDissolve, animations: {
+<<<<<<< HEAD
                     self.linses = 3
                     self.tableview.reloadData()
                 }, completion: { _ in
                     self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
                     self.tableview.refresh_footer()?.no_more_data = false
+=======
+                    self.linses = 0
+                    self.tableview.reloadData()
+                }, completion: { _ in
+                    self.tableview.refresh_header()?.status_change(to: .refreshed(true, nil))
+>>>>>>> 050f3bbc8d5e211a0526e1bad821b73fced194e5
                 })
             default:
                 break
@@ -52,13 +63,27 @@ class ViewController: UIViewController {
                     self.linses += 3
                     self.tableview.reloadData()
                 }, completion: { _ in
+<<<<<<< HEAD
                     self.tableview.refresh_footer()?.status_set(refreshed: true, data: nil)
                     self.tableview.refresh_footer()?.no_more_data = true
+=======
+                    self.tableview.refresh_footer()?.status_change(to: .refreshed(true, nil))
+>>>>>>> 050f3bbc8d5e211a0526e1bad821b73fced194e5
                 })
             default:
                 break
             }
         }
+    }
+    
+    
+    @IBAction func fully(_ sender: UIButton) {
+        self.tableview.refresh_footer()?.status_change(to: .fully)
+    }
+    
+    
+    @IBAction func normal(_ sender: UIButton) {
+        self.tableview.refresh_footer()?.status_change(to: .normal)
     }
     
 }
@@ -71,7 +96,7 @@ extension ViewController: RefreshView_Delegate {
 //        DispatchQueue.global().async {
 //            Thread.sleep(forTimeInterval: 3)
 //            DispatchQueue.main.async {
-//                self.tableview.refresh_header()?.status_set(refreshed: true, data: nil)
+//                self.tableview.refresh_header()?.status_change(to: .refreshed(true, nil))
 //            }
 //        }
     }

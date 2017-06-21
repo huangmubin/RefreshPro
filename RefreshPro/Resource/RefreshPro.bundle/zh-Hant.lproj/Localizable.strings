@@ -2,8 +2,10 @@
 "RefreshView_Refresh_Success" = "數據刷新成功";
 "RefreshView_Refresh_Error" = "數據刷新失败";
 
+"RefreshView_Refresh_Fully" = "已經全部加載完畢";
+
 "RefreshView_Draging_Text" = "鬆開立即刷新";
-"RefreshView_Time_Prefix_Text" = "最後更新：";
+"RefreshView_Time_Prefix_Text" = "最後更新";
 
 "RefreshView_Header_Normal_Text" = "下拉可以刷新";
 

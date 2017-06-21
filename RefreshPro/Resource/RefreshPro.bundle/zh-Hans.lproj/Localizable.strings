@@ -2,7 +2,9 @@
 "RefreshView_Refresh_Success" = "数据刷新成功";
 "RefreshView_Refresh_Error" = "数据刷新失败";
 
-"RefreshView_Time_Prefix_Text" = "最后更新：";
+"RefreshView_Refresh_Fully" = "已经全部加载完毕";
+
+"RefreshView_Time_Prefix_Text" = "最后更新";
 "RefreshView_Draging_Text" = "松开立即刷新";
 
 "RefreshView_Header_Normal_Text" = "下拉可以刷新";

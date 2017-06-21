@@ -22,6 +22,15 @@ extension UIScrollView {
 
 class RefreshView_Footer: RefreshView {
     
+    override var frame: CGRect {
+        didSet {
+            print("Footer = \(frame)")
+            if frame.origin.y == 0 {
+                print("")
+            }
+        }
+    }
+    
     // MARK: - Init Deploy
     
     /** 初始化完毕时调用，用于配置视图属性 */
@@ -34,46 +43,62 @@ class RefreshView_Footer: RefreshView {
     
     // MARK: - Status Actions
     
-    /** 设置状态成为 normal */
-    override func status_set(normal complete: (() -> Void)?) {
-        if var inset = self.scroll_view?.contentInset {
-            if self.refresh_direction_is_vertical {
-                inset.bottom -= self.refresh_space
+    override func status_normal(complete: (() -> Void)?) {
+        if refresh_inset_is_offseted {
+            if var inset = self.scroll_view?.contentInset {
+                if self.refresh_direction_is_vertical {
+                    inset.bottom -= self.refresh_space
+                }
+                else {
+                    inset.right -= self.refresh_space
+                }
+                UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
+                    self.scroll_view?.contentInset = inset
+                }, completion: { _ in
+                    self.refresh_inset_is_offseted = false
+                    complete?()
+                })
             }
-            else {
-                inset.right -= self.refresh_space
-            }
-            UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
-                self.scroll_view?.contentInset = inset
-            }, completion: { _ in
-                super.status_set(normal: complete)
-            })
+        }
+        else {
+            complete?()
         }
     }
     
-    /** 设置状态成为 refresh，并且进入刷新状态，留给 Footer, Header 视图自己实现 */
-    override func status_set(refesh_to_refeshing complete: (() -> Void)?) {
-        status = .refresh
-        if refresh_direction_is_vertical {
-            UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
-                if var inset = self.scroll_view?.contentInset {
-                    inset.bottom = inset.bottom + self.refresh_space
-                    self.scroll_view?.contentInset = inset
-                }
-            }, completion: { _ in
-                self.status = .refreshing
-            })
+    override func status_refresh() {
+        if refresh_inset_is_offseted {
+            self.status_change(to: .refreshing)
         }
         else {
-            UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
-                if var inset = self.scroll_view?.contentInset {
-                    inset.right = inset.right + self.refresh_space
-                    self.scroll_view?.contentInset = inset
-                }
-            }, completion: { _ in
-                self.status = .refreshing
-            })
+            if refresh_direction_is_vertical {
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
+                    if var inset = self.scroll_view?.contentInset {
+                        inset.bottom = inset.bottom + self.refresh_space
+                        self.scroll_view?.contentInset = inset
+                    }
+                }, completion: { _ in
+                    self.status_change(to: .refreshing)
+                    self.refresh_inset_is_offseted = true
+                })
+            }
+            else {
+                UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 10, options: .curveLinear, animations: {
+                    if var inset = self.scroll_view?.contentInset {
+                        inset.right = inset.right + self.refresh_space
+                        self.scroll_view?.contentInset = inset
+                    }
+                }, completion: { _ in
+                    self.status_change(to: .refreshing)
+                    self.refresh_inset_is_offseted = true
+                })
+            }
         }
+    }
+    
+    override func status_refreshed(result: Bool, data: Any?) {
+        delay(time: refreshed_animation_time, block: {
+            self.status_change(to: .normal)
+        })
     }
     
     // MARK: - Self and Sub Size Update
@@ -81,16 +106,24 @@ class RefreshView_Footer: RefreshView {
     /** 初始化视图尺寸位置 */
     override func frame_deploy(frame: CGRect, size: CGSize, insert: UIEdgeInsets) {
         if refresh_direction_is_vertical {
+            var height: CGFloat = size.height
+            if size.height == 0 {
+                height += frame.height
+            }
             self.frame = CGRect(
                 x: 0,
-                y: size.height + insert.top,
+                y: height + insert.top,
                 width: frame.width,
                 height: refresh_space
             )
         }
         else {
+            var width: CGFloat = size.width
+            if size.width == 0 {
+                width += frame.width
+            }
             self.frame = CGRect(
-                x: size.width + insert.left,
+                x: width + insert.left,
                 y: 0,
                 width: refresh_space,
                 height: frame.height
@@ -101,16 +134,26 @@ class RefreshView_Footer: RefreshView {
     /** 更新视图尺寸位置 */
     override func frame_update(frame: CGRect, size: CGSize, offset: CGPoint, insert: UIEdgeInsets) {
         if refresh_direction_is_vertical {
+            var height: CGFloat = size.height
+            if size.height == 0 {
+                height += frame.height
+                height -= insert.bottom
+            }
             self.frame = CGRect(
                 x: 0,
-                y: size.height,
+                y: height + insert.top,
                 width: frame.width,
                 height: refresh_space
             )
         }
         else {
+            var width: CGFloat = size.width
+            if size.width == 0 {
+                width += frame.width
+                width -= insert.right
+            }
             self.frame = CGRect(
-                x: size.width,
+                x: width + insert.left,
                 y: 0,
                 width: refresh_space,
                 height: frame.height
@@ -127,12 +170,28 @@ class RefreshView_Footer: RefreshView {
         
         // 更新尺寸
         if refresh_direction_is_vertical {
-            if self.frame.origin.y != size.height {
+            if size.height == 0 {
+                if self.frame.origin.y != frame.height {
+                    if frame.height - self.scroll_view!.contentInset.bottom == 0 {
+                        print("")
+                    }
+                    self.frame.origin.y = frame.height - self.scroll_view!.contentInset.bottom
+                }
+            }
+            else if self.frame.origin.y != size.height {
+                if size.height == 0 {
+                    print("")
+                }
                 self.frame.origin.y = size.height
             }
         }
         else {
-            if self.frame.origin.x != size.width {
+            if size.width == 0 {
+                if self.frame.origin.x != frame.width {
+                    self.frame.origin.x = frame.width - self.scroll_view!.contentInset.right
+                }
+            }
+            else if self.frame.origin.x != size.width {
                 self.frame.origin.x = size.width
             }
         }
@@ -144,33 +203,33 @@ class RefreshView_Footer: RefreshView {
             case .normal:
                 if offset.y > 0 || offset.x > 0 {
                     let spcae = frame.height + offset.y - size.height
-                    status = .draging(spcae / refresh_space)
+                    status_change(to: .draging(spcae / refresh_space))
                 }
             case .draging(_):
                 if refresh_direction_is_vertical {
                     if offset.y <= 0 {
-                        status = .draging(0)
-                        status = .normal
+                        status_change(to: .draging(0))
+                        status_change(to: .normal)
                     }
                     else if self.frame.maxY - offset.y < frame.height {
-                        status = .draging(offset.y / refresh_space + 1)
+                        status_change(to: .draging(offset.y / refresh_space + 1))
                     }
                     else {
                         let space = frame.height + offset.y - size.height
-                        status = .draging(space / refresh_space)
+                        status_change(to: .draging(space / refresh_space))
                     }
                 }
                 else {
                     if offset.x <= 0 {
-                        status = .draging(0)
-                        status = .normal
+                        status_change(to: .draging(0))
+                        status_change(to: .normal)
                     }
                     else if self.frame.maxX - offset.x < frame.width {
-                        status = .draging(offset.x / refresh_space + 1)
+                        status_change(to: .draging(offset.x / refresh_space + 1))
                     }
                     else {
                         let space = frame.width + offset.x - size.width
-                        status = .draging(space / refresh_space)
+                        status_change(to: .draging(space / refresh_space))
                     }
                 }
             default:
@@ -187,10 +246,10 @@ class RefreshView_Footer: RefreshView {
                             ||
                         (self.frame.maxX - offset.x < frame.width)
                     ) {
-                    status_set(refesh_to_refeshing: nil)
+                    status_change(to: .refresh)
                 }
                 else {
-                    status = .normal
+                    status_change(to: .normal)
                 }
             default:
                 break

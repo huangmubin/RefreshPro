@@ -35,6 +35,7 @@ extension UIScrollView {
 /** 刷新状态 */
 enum RefreshView_Status {
     case invalid                // 当前父视图有其他刷新视图正在刷新中
+    case fully                  // 无法刷新更多数据
     case normal                 // 常态
     case draging(CGFloat)       // 拖动中 value: 当前偏移/额定偏移
     case refresh                // 等待刷新
@@ -58,6 +59,7 @@ class RefreshView: UIView {
     /** 刷新方向是否是垂直的 */
     @IBInspectable var refresh_direction_is_vertical: Bool = true
     
+<<<<<<< HEAD
     /** 是否已经无法继续更新数据了 */
     @IBInspectable var no_more_data: Bool = false {
         willSet {
@@ -84,6 +86,10 @@ class RefreshView: UIView {
             }
         }
     }
+=======
+    /** 当前是否已经进行过偏移 */
+    var refresh_inset_is_offseted: Bool = false
+>>>>>>> 050f3bbc8d5e211a0526e1bad821b73fced194e5
     
     /** 父视图，可用于在 Storyboard 上直接连接 UIScrollView */
     @IBOutlet weak var scroll_view: UIScrollView? {
@@ -109,32 +115,11 @@ class RefreshView: UIView {
     /** 当前刷新状态，每次变更会触发响应事件 */
     private var _status: RefreshView_Status = .normal {
         didSet {
-            switch status {
-            case .invalid:
-                status_invalid()
-            case .normal:
-                status_normal()
-            case .draging(let value):
-                status_draging(value: value)
-            case .refresh:
-                status_refresh()
-            case .refreshing:
-                status_refreshing()
-            case .refreshed(let result, let data):
-                status_refreshed(result: result, data: data)
-            }
+            status_changed(old: oldValue, new: _status)
         }
     }
-    var status: RefreshView_Status {
-        get {
-            return _status;
-        }
-        set {
-            if !no_more_data {
-                _status = newValue
-            }
-        }
-    }
+    /** 当前刷新状态 */
+    var status: RefreshView_Status { return _status; }
     
     // MARK: - Datas To SubView
     
@@ -160,6 +145,9 @@ class RefreshView: UIView {
     @IBInspectable var success_text: String?
     /** 刷新失败的文本提示 */
     @IBInspectable var error_text: String?
+    
+    /** 没有更多数据的文本提示 */
+    @IBInspectable var fully_text: String?
     
     /** 默认文本 */
     @IBInspectable var normal_text: String?
@@ -200,6 +188,12 @@ class RefreshView: UIView {
         }
         return localized(key: "RefreshView_Refresh_Error")
     }
+    var text_fully: String {
+        if let text = fully_text {
+            return NSLocalizedString(text, comment: text)
+        }
+        return localized(key: "RefreshView_Refresh_Fully")
+    }
     var text_normal: String {
         if let text = normal_text {
             return NSLocalizedString(text, comment: text)
@@ -226,115 +220,165 @@ class RefreshView: UIView {
     
     init() {
         super.init(frame: CGRect.zero)
-        deploy_at_init()
+        deploy()
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        deploy_at_init()
+        deploy()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        deploy()
+    }
+    
+    /** 初始化调用 */
+    private func deploy() {
+        self.clipsToBounds = true
         deploy_at_init()
     }
     
-    /** 初始化完毕时调用，用于配置视图属性 */
-    func deploy_at_init() {
-        self.clipsToBounds = true
-    }
+    /** SubView: 初始化完毕时调用，用于配置视图属性 */
+    func deploy_at_init() { }
     
     // MARK: - Status Actions
     
-    /** 设置刷新状态为 invalid 时调用 */
-    func status_invalid() {
-        UIView.animate(withDuration: 0.25, animations: {
-            self.alpha = 0
-        }, completion: { _ in
-            self.isHidden = true
-        })
-    }
-    
-    /** 设置刷新状态为 normal 时调用 */
-    func status_normal() {
-        self.isHidden = false
-        UIView.animate(withDuration: 0.25, animations: {
-            self.alpha = 1
-        }, completion: { _ in })
-    }
-    
-    /** 设置刷新状态为 draging 时调用 */
-    func status_draging(value: CGFloat) {}
-    
-    /** 设置刷新状态为 refresh 时调用 */
-    func status_refresh() {}
-    
-    /** 设置刷新状态为 refreshing 时调用
-        刷新动画写在这个位置。
-        默认会调用 delegate.refreshView(view: RefreshView, identifier: String);
-        假如 delegate 为空，则直接调用 status_set(refreshed: false, data: nil)
-     */
-    func status_refreshing() {
-        if let delegate = self.delegate {
-            if self is RefreshView_Header {
-                foreach(super_view: superview, type: RefreshView_Footer.self, handling: {
-                    $0.status = .invalid
+    /** 状态变更事件分发 */
+    private func status_changed(old: RefreshView_Status, new: RefreshView_Status) {
+        switch new {
+        case .invalid:
+            UIView.animate(withDuration: 0.25, animations: {
+                self.alpha = 0
+            }, completion: { _ in
+                self.isHidden = true
+            })
+            status_invalid()
+        case .fully:
+            status_fully()
+        case .normal:
+            if self.alpha == 0 || self.isHidden == true {
+                self.alpha = 0
+                self.isHidden = false
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.alpha = 1
+                }, completion: { _ in })
+            }
+            status_normal(complete: nil)
+        case .draging(let value):
+            status_draging(value: value)
+        case .refresh:
+            status_refresh()
+        case .refreshing:
+            status_refreshing()
+            if let delegate = self.delegate {
+                for Type in [RefreshView_Header.self, RefreshView_Footer.self] {
+                    foreach(super_view: superview, type: Type, handling: {
+                        switch $0.status {
+                        case .normal, .draging:
+                            $0.status_change(to: .invalid)
+                        default: break
+                        }
+                    })
+                }
+                delegate.refreshView(
+                    view: self,
+                    identifier: identifier
+                )
+            }
+            else {
+                print("Refresh View Error: didn't have any refresh delegate, please set the 'delegate' or 'delegate_refresh' property.")
+                delay(time: 1, block: {
+                    self.status_change(to: .refreshed(false, nil))
                 })
             }
-            else if self is RefreshView_Footer {
-                foreach(super_view: superview, type: RefreshView_Header.self, handling: {
-                    $0.status = .invalid
+        case .refreshed(let result, let data):
+            for Type in [RefreshView_Header.self, RefreshView_Footer.self] {
+                foreach(super_view: superview, type: Type, handling: {
+                    switch $0.status {
+                    case .invalid:
+                        $0.status_change(to: .normal)
+                    default: break
+                    }
                 })
             }
-            delegate.refreshView(
-                view: self,
-                identifier: identifier
-            )
-        }
-        else {
-            print("Refresh View Error: didn't have any refresh delegate, please set the 'delegate' or 'delegate_refresh' property.")
-            status_set(refreshed: false, data: nil)
+            status_refreshed(result: result, data: data)
         }
     }
     
-    /** 设置刷新状态为 refreshed 时调用。
-        结束时动画写在这个位置。
-        默认调用 status_set(normal: nil)
-     */
-    func status_refreshed(result: Bool, data: Any?) {
-        status_set(normal: nil)
+    /** 修改状态 */
+    @discardableResult
+    final func status_change(to: RefreshView_Status) -> Bool {
+        switch _status {
+        case .invalid, .fully, .refreshed:
+            switch to {
+            case .normal:
+                _status = to
+                return true
+            default: break
+            }
+        case .normal:
+            switch to {
+            case .draging, .invalid, .fully, .refresh:
+                _status = to
+                return true
+            default: break
+            }
+        case .draging:
+            switch to {
+            case .draging, .normal, .fully, .refresh:
+                _status = to
+                return true
+            default: break
+            }
+        case .refresh:
+            switch to {
+            case .refreshing:
+                _status = to
+                return true
+            default: break
+            }
+        case .refreshing:
+            switch to {
+            case .refreshed:
+                _status = to
+                return true
+            default: break
+            }
+        }
+        print("RefreshView: The \(_status) can't to \(to).")
+        return false
     }
     
+<<<<<<< HEAD
     /** 设置数据已经无法进行刷新了 的状态。 */
     func status_no_more_data() { }
     
     // MARK: Set
+=======
+    // MARK: Sub View Implementation
+>>>>>>> 050f3bbc8d5e211a0526e1bad821b73fced194e5
     
-    /** 设置状态成为 normal */
-    func status_set(normal complete: (() -> Void)?) {
-        status = .normal
-        complete?()
-    }
+    /** SubView: 设置刷新状态为 invalid 时调用 */
+    func status_invalid() { }
     
-    /** 设置状态成为 refreshed，只有在 status == .refreshing 才有用 */
-    func status_set(refreshed result: Bool, data: Any?) {
-        switch status {
-        case .refreshing:
-            foreach(super_view: superview, type: RefreshView.self, handling: {
-                switch $0.status {
-                case .invalid:
-                    $0.status = .normal
-                default: break
-                }
-            })
-            status = .refreshed(result, data)
-        default:
-            break
-        }
-    }
+    /** SubView: 设置刷新状态为 fully 时调用 */
+    func status_fully() { }
     
-    /** 设置状态成为 refresh，并且进入刷新状态，留给 Footer, Header 视图自己实现 */
-    func status_set(refesh_to_refeshing complete: (() -> Void)?) { }
+    /** SubView: 设置刷新状态为 normal 时调用 */
+    func status_normal(complete: (() -> Void)?) { }
+    
+    /** SubView: 设置刷新状态为 draging 时调用 */
+    func status_draging(value: CGFloat) {}
+    
+    /** SubView: 设置刷新状态为 refresh 时调用 */
+    func status_refresh() {}
+    
+    /** SubView: 设置刷新状态为 refreshing 时调用 */
+    func status_refreshing() { }
+    
+    /** SubView: 设置刷新状态为 refreshed 时调用。*/
+    func status_refreshed(result: Bool, data: Any?) { }
     
     // MARK: - Self and Sub Size Update
     
@@ -354,16 +398,16 @@ class RefreshView: UIView {
         }
     }
     
-    /** 初始化视图尺寸位置 */
+    /** SubView: 初始化视图尺寸位置 */
     func frame_deploy(frame: CGRect, size: CGSize, insert: UIEdgeInsets) {}
     
-    /** 更新视图尺寸位置 */
+    /** SubView: 更新视图尺寸位置 */
     func frame_update(frame: CGRect, size: CGSize, offset: CGPoint, insert: UIEdgeInsets) {}
     
-    /** 更新视图偏移位置 */
+    /** SubView: 更新视图偏移位置 */
     func frame_offset(frame: CGRect, size: CGSize, offset: CGPoint) {}
     
-    /** 更新子视图的尺寸 */
+    /** SubView: 更新子视图的尺寸 */
     func frame_subviews_update(size: CGRect) {}
     
     // MARK: - Key Value Observer
@@ -372,7 +416,7 @@ class RefreshView: UIView {
     static let key_path_contentSize   = "contentSize"
     
     /** 监听父视图的属性更新 */
-    func observer() {
+    private func observer() {
         let options = NSKeyValueObservingOptions(
             rawValue: NSKeyValueObservingOptions.new.rawValue | NSKeyValueObservingOptions.old.rawValue
         )
@@ -391,7 +435,7 @@ class RefreshView: UIView {
     }
     
     /** 取消监听父视图的属性更新 */
-    func unobserver() {
+    private func unobserver() {
         self.superview?.removeObserver(
             self,
             forKeyPath: RefreshView.key_path_contentOffset
@@ -413,7 +457,7 @@ class RefreshView: UIView {
     }
     
     /** 父视图 constant offset 属性变化 */
-    func super_view_constant_offset(change: [NSKeyValueChangeKey : Any]?) {
+    private func super_view_constant_offset(change: [NSKeyValueChangeKey : Any]?) {
         if let view = superview as? UIScrollView {
             frame_offset(
                 frame: view.frame,
@@ -424,7 +468,7 @@ class RefreshView: UIView {
     }
     
     /** 父视图 constant size 属性变化 */
-    func super_view_constant_size(change: [NSKeyValueChangeKey : Any]?) {
+    private func super_view_constant_size(change: [NSKeyValueChangeKey : Any]?) {
         if let view = superview as? UIScrollView {
             frame_update(
                 frame: view.frame,
@@ -434,7 +478,6 @@ class RefreshView: UIView {
             )
         }
     }
-    
     
     // MARK: - Add or Move SuperView Action
     
@@ -460,6 +503,14 @@ class RefreshView: UIView {
                 $0.removeFromSuperview()
             })
         }
+        else if self is RefreshView_Empty {
+            foreach(super_view: newSuperview, type: RefreshView_Empty.self, handling: {
+                $0.removeFromSuperview()
+            })
+            DispatchQueue.main.async {
+                self.scroll_view?.insertSubview(self, at: 0)
+            }
+        }
         
         /// 判断方向
         refresh_direction_is_vertical = true
@@ -473,7 +524,7 @@ class RefreshView: UIView {
         
         /// 配置属性
         if let scroll = newSuperview as? UIScrollView {
-            status = .normal
+            status_change(to: .normal)
             scroll_view = scroll
             frame_deploy(
                 frame: scroll.frame,
@@ -500,7 +551,7 @@ class RefreshView: UIView {
 extension RefreshView {
     
     /** 延迟调用，制作动画等效果时用于简化代码的小工具 */
-    func delay(time: TimeInterval, block: @escaping () -> Void) {
+    final func delay(time: TimeInterval, block: @escaping () -> Void) {
         DispatchQueue.global().async {
             Thread.sleep(forTimeInterval: time)
             DispatchQueue.main.async {
@@ -510,21 +561,24 @@ extension RefreshView {
     }
     
     /** 获取字典中的数据 */
-    func datas(key: String) -> Any? {
+    final func datas(key: String) -> Any? {
         return datas_dic[key]
     }
     
     /** 获取字典中的数据 */
-    func datas<T>(key: String) -> T? {
+    final func datas<T>(key: String) -> T? {
         return datas_dic[key] as? T
     }
     
     /** 获取某个视图的视图层次中对应类型的视图并做相应处理 */
-    func foreach<T>(super_view: UIView?, type: T.Type, handling: (T) -> Void) {
+    final func foreach<T>(super_view: UIView?, type: T.Type, handling: (T) -> Void) {
         if let view = super_view {
+            let type_description = "\(type)"
             for sub_view in view.subviews {
-                if let handling_view = sub_view as? T {
-                    handling(handling_view)
+                if sub_view.description.contains(type_description) {
+                    if let handling_view = sub_view as? T {
+                        handling(handling_view)
+                    }
                 }
             }
         }
@@ -539,7 +593,7 @@ extension RefreshView {
     
     /** 获取资源文件夹 */
     private static var bundle: Bundle?
-    func get_bundle() -> Bundle? {
+    final func get_bundle() -> Bundle? {
         if RefreshView.bundle == nil {
             if let path = Bundle.main.path(
                 forResource: "RefreshPro",
@@ -552,7 +606,7 @@ extension RefreshView {
     
     /** 获取资源文件中的图片 */
     private static var _images: [String: UIImage] = [:]
-    func image(name: String) -> UIImage? {
+    final func image(name: String) -> UIImage? {
         if let image = RefreshView._images[name] {
             return image
         }
@@ -569,7 +623,7 @@ extension RefreshView {
     
     /** 获取资源文件中的本地化语言 */
     private static var languages: [String: Bundle] = [:]
-    func localized(key: String) -> String {
+    final func localized(key: String) -> String {
         func local(bundle: Bundle, key: String) -> String {
             return bundle.localizedString(forKey: key, value: nil, table: nil)
         }
